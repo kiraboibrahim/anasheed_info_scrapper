@@ -17,13 +17,12 @@ class Artist(Base):
         if not id:
             session.add(self)
             session.commit()
-            return self.id
-        else:
-            return id
+            id = self.id
+        return id
 
     def __artist_exists(self, session):
-        artist = session.query(Artist).filter(Artist.anasheed_id == self.anasheed_id).all()
-        if artist == []:
+        artist = session.query(Artist).filter(Artist.anasheed_id == self.anasheed_id).one_or_none()
+        if not artist:
             return False
         else:
             # Return the artist_id and use for the consequent operations
@@ -56,8 +55,8 @@ class Track(Base):
             return id
 
     def __track_exists(self, session):
-        track = session.query(Track).filter(Track.anasheed_id == self.anasheed_id).all()
-        if track == []:
+        track = session.query(Track).filter(Track.anasheed_id == self.anasheed_id).one_or_none()
+        if not track:
             return False
         else:
             # Return the artist_id and use for the consequent operations
@@ -81,7 +80,8 @@ class Stream(Base):
             session.commit()
 
     def __stream_exists(self, session):
-        stream = session.query(Stream).filter(Stream.track_id == self.track_id).all()
-        if stream == []:
+        # Each track is associated with only one stream
+        stream = session.query(Stream).filter(Stream.track_id == self.track_id).one_or_none()
+        if not stream:
             return False
         return True
