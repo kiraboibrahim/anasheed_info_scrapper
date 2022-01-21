@@ -7,11 +7,12 @@ import os
 from bs4 import BeautifulSoup as bs
 from entities import Artist, Track, Stream
 from config import *
-from sqlachemy import create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 engine = create_engine(DATABASE_URL, echo=True)
-session = sessionmaker(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def download(url, stream = False):
     response = requests.get(url, stream)
@@ -50,10 +51,10 @@ def save_file(source, filename, type="a"):
     # Save the downloaded data to the disk
     if type == "a":
         # It is an artist, save the image in the ARTISTS_IMAGES_BASEDIR
-        filepath = "{base}/{filename}".format(base=ARTISTS_IMAGES_BASEDIR, filename = filename)
-    else if type == "t":
+        filepath = "{base_dir}/{filename}".format(base_dir=ARTISTS_IMAGES_BASE_DIR, filename = filename)
+    elif type == "t":
         # This is a track, save the track to TRACKS_BASEDIR
-        filepath = "{base}/{filename}".format(base=TRACKS_BASEDIR, filename = filename)
+        filepath = "{base_dir}/{filename}".format(base_dir=TRACKS_BASE_DIR, filename = filename)
     else:
         raise Exception("Unknown type: %s" %(type))
 
